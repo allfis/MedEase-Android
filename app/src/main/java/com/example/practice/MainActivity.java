@@ -1,40 +1,44 @@
 package com.example.practice;
 
-import  android.content.Intent;
+import android.content.Intent;
 import android.os.Bundle;
-import android.view.View;
-import android.widget.Button;
-import android.widget.EditText;
+import android.widget.RadioGroup;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.practice.admin.AdminDashboardActivity;
+import com.example.practice.patient.PatientDashboardActivity;
+import com.google.android.material.button.MaterialButton;
+import com.google.android.material.textfield.TextInputEditText;
+
 public class MainActivity extends AppCompatActivity {
 
-    EditText etName, etId;
-    Button btnSend;
+    public static final String EXTRA_EMAIL = "email";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        etName = findViewById(R.id.etName);
-        etId = findViewById(R.id.etId);
-        btnSend = findViewById(R.id.btnSend);
+        RadioGroup rgRole = findViewById(R.id.rgRole);
+        TextInputEditText etEmail = findViewById(R.id.etEmail);
+        MaterialButton btnLogin = findViewById(R.id.btnLogin);
 
-        btnSend.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+        findViewById(R.id.rbPatient).performClick();
 
-                String name = etName.getText().toString();
-                String id = etId.getText().toString();
-
-                Intent intent = new Intent(MainActivity.this, com.example.twoactivity.SecondActivity.class);
-                intent.putExtra("name", name);
-                intent.putExtra("id", id);
-
-                startActivity(intent);
+        btnLogin.setOnClickListener(v -> {
+            String email = etEmail.getText() == null ? "" : etEmail.getText().toString().trim();
+            if (email.isEmpty()) {
+                Toast.makeText(this, "Enter email", Toast.LENGTH_SHORT).show();
+                return;
             }
+
+            boolean isAdmin = rgRole.getCheckedRadioButtonId() == R.id.rbAdmin;
+
+            Intent i = new Intent(this, isAdmin ? AdminDashboardActivity.class : PatientDashboardActivity.class);
+            i.putExtra(EXTRA_EMAIL, email);
+            startActivity(i);
         });
     }
 }
