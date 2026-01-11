@@ -8,6 +8,7 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.practice.admin.AdminDashboardActivity;
+import com.example.practice.data.MedEaseRepo;
 import com.example.practice.patient.PatientDashboardActivity;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.textfield.TextInputEditText;
@@ -19,6 +20,8 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        MedEaseRepo.init(this);
+
         setContentView(R.layout.activity_main);
 
         RadioGroup rgRole = findViewById(R.id.rgRole);

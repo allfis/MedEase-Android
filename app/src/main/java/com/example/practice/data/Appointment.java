@@ -1,24 +1,22 @@
 package com.example.practice.data;
 
-import java.io.Serializable;
-import java.util.UUID;
+public class Appointment {
 
-public class Appointment implements Serializable {
     public enum Status { PENDING, APPROVED, REJECTED }
 
-    public final String id;
-    public final String patientEmail;
-    public final String doctorId;
-    public final String doctorName;
-    public final String timeText;
+    public String id;
+    public String patientEmail;
+    public String doctorId;
+    public String doctorName;
+    public String slot;
     public Status status;
 
-    public Appointment(String patientEmail, String doctorId, String doctorName, String timeText) {
-        this.id = UUID.randomUUID().toString();
+    public Appointment(String id, String patientEmail, String doctorId, String doctorName, String slot, Status status) {
+        this.id = id;
         this.patientEmail = patientEmail;
         this.doctorId = doctorId;
         this.doctorName = doctorName;
-        this.timeText = timeText;
-        this.status = Status.PENDING;
+        this.slot = slot;
+        this.status = status;
     }
 }

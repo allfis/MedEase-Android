@@ -1,4 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
-    <item android:id="@+id/nav_appointments" android:title="Appointments"/>
+
+    <item android:id="@+id/nav_dashboard" android:title="Dashboard" />
+    <item android:id="@+id/nav_doctors" android:title="Doctor Management" />
+    <item android:id="@+id/nav_appointments" android:title="View Appointments" />
+    <item android:id="@+id/nav_schedule" android:title="Schedule Management" />
+    <item android:id="@+id/nav_patients" android:title="Patient Records" />
+    <item android:id="@+id/nav_reviews" android:title="Reviews" />
+    <item android:id="@+id/nav_monitor" android:title="System Monitoring" />
+
 </menu>
