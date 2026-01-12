@@ -27,6 +27,66 @@ public class MedEaseRepo {
         return instance;
     }
 
+    public String authenticate(String email, String password) {
+        SQLiteDatabase r = db.getReadableDatabase();
+        Cursor c = r.rawQuery(
+                "SELECT role FROM users WHERE email=? AND password=?",
+                new String[]{email, password}
+        );
+        String role = null;
+        if (c.moveToFirst()) role = c.getString(0);
+        c.close();
+        return role;
+    }
+
+    public List<Appointment> getPendingAppointments() {
+        SQLiteDatabase r = db.getReadableDatabase();
+        Cursor c = r.rawQuery(
+                "SELECT id,patient_email,doctor_id,doctor_name,slot,status " +
+                        "FROM appointments WHERE status='PENDING' ORDER BY created_at DESC",
+                null
+        );
+
+        List<Appointment> list = new ArrayList<>();
+        while (c.moveToNext()) {
+            list.add(new Appointment(
+                    c.getString(0),
+                    c.getString(1),
+                    c.getString(2),
+                    c.getString(3),
+                    c.getString(4),
+                    Appointment.Status.valueOf(c.getString(5))
+            ));
+        }
+        c.close();
+        return list;
+    }
+    public int countUsers() {
+        SQLiteDatabase r = db.getReadableDatabase();
+        Cursor c = r.rawQuery("SELECT COUNT(*) FROM users", null);
+        int count = 0;
+        if (c.moveToFirst()) count = c.getInt(0);
+        c.close();
+        return count;
+    }
+    public boolean hasAnyAppointmentForDoctor(String patientEmail, String doctorId) {
+        SQLiteDatabase r = db.getReadableDatabase();
+        Cursor c = r.rawQuery(
+                "SELECT COUNT(*) FROM appointments WHERE patient_email=? AND doctor_id=?",
+                new String[]{patientEmail, doctorId}
+        );
+        int count = 0;
+        if (c.moveToFirst()) count = c.getInt(0);
+        c.close();
+        return count > 0;
+    }
+
+    public boolean createAppointmentIfNotExists(String patientEmail, Doctor doctor, String slot) {
+        if (hasAnyAppointmentForDoctor(patientEmail, doctor.id)) return false;
+        createAppointment(patientEmail, doctor, slot);
+        return true;
+    }
+
     public List<Doctor> allDoctors() {
         SQLiteDatabase r = db.getReadableDatabase();
         Cursor cur = r.rawQuery("SELECT id,name,specialist,hospital FROM doctors ORDER BY name", null);

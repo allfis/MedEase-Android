@@ -24,7 +24,8 @@ public class AdminAppointmentAdapter extends RecyclerView.Adapter<AdminAppointme
 
     @Override
     public VH onCreateViewHolder(ViewGroup parent, int viewType) {
-        View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.row_admin_appointment, parent, false);
+        View v = LayoutInflater.from(parent.getContext())
+                .inflate(R.layout.row_admin_appointment, parent, false);
         return new VH(v);
     }
 
@@ -33,17 +34,24 @@ public class AdminAppointmentAdapter extends RecyclerView.Adapter<AdminAppointme
         Appointment a = data.get(position);
 
         h.tvDoctor.setText(a.doctorName);
-        h.tvStatus.setText(a.status.name());
+        h.tvPatient.setText(a.patientEmail);
+        h.tvSlot.setText(a.slot);
 
         h.btnApprove.setOnClickListener(v -> {
             MedEaseRepo.get().setAppointmentStatus(a.id, Appointment.Status.APPROVED);
-            notifyItemChanged(position);
+            removeItem(position);
         });
 
         h.btnReject.setOnClickListener(v -> {
             MedEaseRepo.get().setAppointmentStatus(a.id, Appointment.Status.REJECTED);
-            notifyItemChanged(position);
+            removeItem(position);
         });
+    }
+
+    private void removeItem(int position) {
+        data.remove(position);
+        notifyItemRemoved(position);
+        notifyItemRangeChanged(position, data.size());
     }
 
     @Override
@@ -52,13 +60,14 @@ public class AdminAppointmentAdapter extends RecyclerView.Adapter<AdminAppointme
     }
 
     static class VH extends RecyclerView.ViewHolder {
-        TextView tvDoctor, tvStatus;
+        TextView tvDoctor, tvPatient, tvSlot;
         MaterialButton btnApprove, btnReject;
 
         VH(View v) {
             super(v);
             tvDoctor = v.findViewById(R.id.tvDoctor);
-            tvStatus = v.findViewById(R.id.tvStatus);
+            tvPatient = v.findViewById(R.id.tvPatient);
+            tvSlot = v.findViewById(R.id.tvSlot);
             btnApprove = v.findViewById(R.id.btnApprove);
             btnReject = v.findViewById(R.id.btnReject);
         }

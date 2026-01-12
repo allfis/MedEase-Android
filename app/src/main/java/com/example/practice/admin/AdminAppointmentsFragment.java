@@ -1,5 +1,4 @@
 package com.example.practice.admin;
-import com.example.practice.admin.AdminAppointmentAdapter;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -11,30 +10,22 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.practice.R;
-import com.example.practice.data.Appointment;
 import com.example.practice.data.MedEaseRepo;
-
-
-import java.util.ArrayList;
 
 public class AdminAppointmentsFragment extends Fragment {
 
-    ArrayList<Appointment> list = new ArrayList<>();
-    AdminAppointmentAdapter adapter;
-
+    @Override
     public View onCreateView(LayoutInflater i, ViewGroup c, Bundle b) {
         View v = i.inflate(R.layout.fragment_admin_appointments, c, false);
+
         RecyclerView rv = v.findViewById(R.id.rvAppointments);
         rv.setLayoutManager(new LinearLayoutManager(getContext()));
-        adapter = new AdminAppointmentAdapter(list);
-        rv.setAdapter(adapter);
-        return v;
-    }
+        rv.setAdapter(
+                new AdminAppointmentAdapter(
+                        MedEaseRepo.get().getPendingAppointments()
+                )
+        );
 
-    public void onResume() {
-        super.onResume();
-        list.clear();
-        list.addAll(MedEaseRepo.get().getAllAppointments());
-        adapter.notifyDataSetChanged();
+        return v;
     }
 }

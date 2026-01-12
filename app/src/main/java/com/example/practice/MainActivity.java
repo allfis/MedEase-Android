@@ -2,7 +2,7 @@ package com.example.practice;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.widget.RadioGroup;
+import android.util.Log;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -20,28 +20,45 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         MedEaseRepo.init(this);
+        Log.d("DB", "Users count = " + MedEaseRepo.get().countUsers());
+
 
         setContentView(R.layout.activity_main);
 
-        RadioGroup rgRole = findViewById(R.id.rgRole);
         TextInputEditText etEmail = findViewById(R.id.etEmail);
+        TextInputEditText etPassword = findViewById(R.id.etPassword);
         MaterialButton btnLogin = findViewById(R.id.btnLogin);
 
-        findViewById(R.id.rbPatient).performClick();
-
         btnLogin.setOnClickListener(v -> {
+
             String email = etEmail.getText() == null ? "" : etEmail.getText().toString().trim();
-            if (email.isEmpty()) {
-                Toast.makeText(this, "Enter email", Toast.LENGTH_SHORT).show();
+            String password = etPassword.getText() == null ? "" : etPassword.getText().toString().trim();
+
+            if (email.isEmpty() || password.isEmpty()) {
+                Toast.makeText(this, "Enter email and password", Toast.LENGTH_SHORT).show();
                 return;
             }
 
-            boolean isAdmin = rgRole.getCheckedRadioButtonId() == R.id.rbAdmin;
+            String role = MedEaseRepo.get().authenticate(email, password);
 
-            Intent i = new Intent(this, isAdmin ? AdminDashboardActivity.class : PatientDashboardActivity.class);
-            i.putExtra(EXTRA_EMAIL, email);
-            startActivity(i);
+            if (role == null) {
+                Toast.makeText(this, "Invalid credentials", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            Intent intent;
+
+            if (role.equals("ADMIN")) {
+                intent = new Intent(this, AdminDashboardActivity.class);
+            } else {
+                intent = new Intent(this, PatientDashboardActivity.class);
+            }
+
+            intent.putExtra(EXTRA_EMAIL, email);
+            startActivity(intent);
+            finish();
         });
     }
 }
